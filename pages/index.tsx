@@ -1,65 +1,58 @@
-import Head from 'next/head'
-import Image from 'next/image'
+import React, { useState, useEffect } from "react";
+import Head from "next/head";
+import axios from "axios";
 
-import styles from '@/pages/index.module.css'
+import styles from "@/pages/index.module.css";
+import type { NextPage } from "next";
+import Article from "@/components/Article/Article";
 
-export default function Home() {
+const Home: NextPage = () => {
+  const [errorHeader, setErrorHeader] = useState<string>("");
+  const [items, setItems] = useState<{ id: string; title: string }[]>([]);
+
+  useEffect(() => {
+    fetch(
+      "https://api.nytimes.com/svc/mostpopular/v2/viewed/1.json?api-key=3uIDS53U17KFaoLdSGFCYP0QvGfppnpe"
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        if (!data.results) {
+          setErrorHeader(
+            `Something went wrong. We're looking into it. No result.`
+          );
+          return;
+        }
+        // if (data.result.length == 0) {
+        //   setErrorHeader(`Could not find any article to match your query.`);
+        //   setItems(data.result);
+        //   setFinishedSearch(true);
+        //   return;
+        // }
+        setItems(data.results);
+      })
+      .catch((error) => {
+        setErrorHeader(
+          `Something went wrong. We're looking into it. Catch block`
+        );
+      });
+  }, []);
+
+  const articles = items.map((article) => {
+      return <Article id={article.id} title={article.title} />;
+  });
+
   return (
     <div className={styles.container}>
       <Head>
-        <title>Create Next App</title>
+        <title>Popular New York Times Articles</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing <code>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a href="https://vercel.com/new" className={styles.card}>
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
+        <h1 className={styles.title}>Popular today</h1>
+        <ul>{articles}</ul>
       </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
-      </footer>
     </div>
-  )
-}
+  );
+};
+export default Home;
