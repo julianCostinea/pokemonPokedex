@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ReactElement } from "react";
+import React, { useState, useEffect, ReactElement, useRef, MutableRefObject } from "react";
 import Head from "next/head";
 import axios, { AxiosResponse } from "axios";
 
@@ -25,6 +25,7 @@ const Home: NextPage = () => {
   const [pokemon, setPokemon] = useState<string>("Pikachu");
   const [pokemonData, setPokemonData] = useState<Pokemon[]>([]);
   const [pokemonType, setPokemonType] = useState<string>("");
+  const searchTermInputRef = useRef() as MutableRefObject<HTMLInputElement>;
   let pokemons: ReactElement[] = [];
 
   async function axiosGetJsonData<T>(url: string): Promise<T> {
@@ -36,13 +37,13 @@ const Home: NextPage = () => {
     }
   }
 
-  const handleSubmit: React.FormEventHandler = async (evt) => {
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (evt) => {
     evt.preventDefault();
+    const pokemonQuery = searchTermInputRef.current.value.trim() as string;
     const newPokemon = await axiosGetJsonData<Pokemon>(
-      `https://pokeapi.co/api/v2/pokemon/${pokemon}`
+      `https://pokeapi.co/api/v2/pokemon/${pokemonQuery}`
     );
-    console.log(newPokemon.name);
-    
+    console.log(newPokemon.id);
   };
   // function handleSubmit(event: React.FormEventHandler<HTMLFormElement>){
   //   event.preventDefault();
@@ -52,11 +53,10 @@ const Home: NextPage = () => {
   //   // console.log('====================================');
   // }
 
-  const handleChange: React.ChangeEventHandler<HTMLInputElement> = (evt) => {
-    evt.preventDefault();
-    setPokemon(evt.target.value.toLowerCase());
-  };
-
+  // const handleChange: React.ChangeEventHandler<HTMLInputElement> = (evt) => {
+  //   evt.preventDefault();
+  //   setPokemon(evt.target.value.toLowerCase());
+  // };
 
   useEffect(() => {
     try {
@@ -72,11 +72,13 @@ const Home: NextPage = () => {
     }
   }, []);
 
-  pokemons = items.slice(randomPokemonNumber, randomPokemonNumber+20).map((pokemon) => {
-    return (
-      <PokemonItem url={pokemon.url} name={pokemon.name} key={pokemon.url} />
-    );
-  });
+  pokemons = items
+    .slice(randomPokemonNumber, randomPokemonNumber + 20)
+    .map((pokemon) => {
+      return (
+        <PokemonItem url={pokemon.url} name={pokemon.name} key={pokemon.url} />
+      );
+    });
 
   return (
     <div className={styles.container}>
@@ -89,8 +91,8 @@ const Home: NextPage = () => {
         <form onSubmit={handleSubmit}>
           <label>
             <input
+              ref={searchTermInputRef}
               type="text"
-              onChange={handleChange}
               placeholder="enter pokemon name"
             />
           </label>
