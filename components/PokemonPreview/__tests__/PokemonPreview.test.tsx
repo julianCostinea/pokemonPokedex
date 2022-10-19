@@ -1,9 +1,9 @@
 import { render, screen } from '@testing-library/react'
-import PokemonItem from "../PokemonItem";
+import PokemonPreview from "../PokemonPreview";
 
 describe('Pokemon Item test', () => {
   it('Renders a new pokemon', () => {
-    render(<PokemonItem name='New Pokemon' url = "url" />)
+    render(<PokemonPreview name='New Pokemon' pokemonType='Grass' />)
 
     const heading = screen.getByRole('heading', {
       name: /new pokemon/i,
