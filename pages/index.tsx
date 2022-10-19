@@ -44,8 +44,13 @@ const Home: NextPage = () => {
       return;
     }
     const pokemonQuery = searchTermInputRef.current.value.toLowerCase().trim() as string;
-    const newPokemon = await axiosGetJsonData<Pokemon>(`https://pokeapi.co/api/v2/pokemon/${pokemonQuery}`);
-    setPokemonPreviewData(newPokemon);
+
+    try {
+      const newPokemon = await axiosGetJsonData<Pokemon>(`https://pokeapi.co/api/v2/pokemon/${pokemonQuery}`);
+      setPokemonPreviewData(newPokemon);
+    } catch (error: any) {
+      setErrorHeader("Enter a valid pokemon from Kanto.");
+    }
   };
   // function handleSubmit(event: React.FormEventHandler<HTMLFormElement>){
   //   event.preventDefault();
@@ -87,7 +92,7 @@ const Home: NextPage = () => {
           />
         )}
         <h1 className={styles.title}>Other popular pokemon</h1>
-        <PokemonList/>
+        <PokemonList />
       </main>
     </div>
   );
