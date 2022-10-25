@@ -11,11 +11,25 @@ export interface fetchedPokemons {
   }[];
 }
 
+interface responseError {
+  response: {
+    data: {
+      message: string;
+    };
+  };
+}
+function instanceOfResponseError(object: any): object is responseError {
+  return "response" in object;
+}
+
 async function axiosGetJsonData<T>(url: string): Promise<T> {
   try {
     const response = await axios.get<T>(url);
     return response.data;
   } catch (error: any) {
+    if (instanceOfResponseError(error)) {
+      throw new Error(error.response.data.message);
+    }
     throw new Error(`Error in 'axiosGetJsonData(${url})': ${error.message}`);
   }
 }
@@ -35,7 +49,7 @@ const PokemonList: React.FC = ({}): ReactElement => {
         setLoading((l) => l - 1);
       }
     };
-    fetchPokemon();
+    void fetchPokemon();
   }, []);
 
   const [items, setItems] = useState<fetchedPokemons["results"]>([]);
