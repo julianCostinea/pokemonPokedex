@@ -1,8 +1,10 @@
 import React, { ReactNode } from "react";
-import { SWRConfig } from "swr";
+import { SWRConfig, Cache } from "swr";
 import { Fetcher, PublicConfiguration } from "swr/dist/types";
 import axios from "axios";
 import { Pokemon } from "../pages/fromuseswr";
+
+type Provider = { provider?: (cache: Readonly<Cache<any>>) => Cache<any> };
 
 export function MySwrConfig({
   children,
@@ -10,19 +12,33 @@ export function MySwrConfig({
 }: {
   children?: ReactNode;
   // eslint-disable-next-line
-  swrConfig?: Partial<PublicConfiguration<any, any, Fetcher<any>>>;
+  swrConfig?: Partial<PublicConfiguration<any, any, Fetcher<any>>> & Provider;
 }) {
   return <SWRConfig value={{ fetcher: customFetcher, ...swrConfig }}>{children}</SWRConfig>;
 }
 
+//axios does not cause cache issues
+// export async function customFetcher(url: string) {
+//   try {
+//     const res = await axios.get<Pokemon>(url);
+//     return res.data;
+//   } catch (error: any) {
+//     if (error.response.data.message) {
+//       throw new Error(error.response.data.message);
+//     }    
+//     throw new Error(error.response.data);
+//   }
+// }
+
 export async function customFetcher(url: string) {
-  const res = await axios.get<Pokemon>(url);
+  const res = await fetch(url);
 
   // If the status code is not in the range 200-299,
   // we still try to parse and throw it.
-  if (res.status !== 200) {
-    throw new Error(res.data.error.message);
+  if (!res.ok) {
+    const json = (await res.json()) as { message: string };
+    throw new Error(json.message);
   }
 
-  return res.data;
+  return res.json();
 }

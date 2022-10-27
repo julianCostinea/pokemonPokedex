@@ -10,14 +10,14 @@ interface IProps {
 }
 
 const PokemonPreviewWithSwr: React.FC<IProps> = ({ pokemonQuery }): ReactElement => {
-  const fetcher = async (url: string) => await axios.get<Pokemon>(url).then((res) => res.data);
+  // const fetcher = async (url: string) => await axios.get<Pokemon>(url).then((res) => res.data);
   const { isValidating, data, error } = useSWR<Pokemon, Error>(
-    `https://pokeapi.co/api/v2/pokemon/${pokemonQuery}`,
-    fetcher
-  );
+    //fetcher comes from myswrconfig
+    `https://pokeapi.co/api/v2/pokemon/${pokemonQuery}` );
 
   return (
     <>
+      <h2>Who&apos;s that pokemon?</h2>
       {isValidating && !error ? <div>Loading...</div> : null}
       {error ? <div>{error.message}</div> : null}
 
