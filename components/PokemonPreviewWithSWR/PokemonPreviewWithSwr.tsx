@@ -17,7 +17,7 @@ const PokemonPreviewWithSwr: React.FC<IProps> = ({ pokemonQuery }): ReactElement
 
   return (
     <>
-      <h2>Who&apos;s that pokemon?</h2>
+      <h2 data-cy="headerId1">Who&apos;s that pokemon?</h2>
       {isValidating && !error ? <div>Loading...</div> : null}
       {error ? <div>{error.message}</div> : null}
 

@@ -1,0 +1,12 @@
+{
+  "results": [
+    {
+      "name": "bulbasaur",
+      "url": "randomURL"
+    },
+    {
+        "name": "charmander",
+        "url": "randomURL"
+      }
+  ]
+}

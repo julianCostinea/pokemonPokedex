@@ -71,7 +71,7 @@ const PokemonList: React.FC = ({}): ReactElement => {
     <>
       {loading ? <div>Loading...</div> : null}
       <h2 style={{ color: "red" }}>{errorHeader}</h2>
-      <div className={classes.pokemonContainer}>{pokemons}</div>
+      <div data-cy="multiplePokemonContainer" className={classes.pokemonContainer}>{pokemons}</div>
     </>
   );
 };
